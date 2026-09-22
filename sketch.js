@@ -15,6 +15,8 @@ let bY = 450
 let bW = 500
 let bH = 500
 
+let ammo = 6
+
 function setup() {
   createCanvas(600, 800);
   background(0);
@@ -27,43 +29,40 @@ function setup() {
 
 function draw() {
   background(0);
+
   noFill()
   stroke(255)
   strokeWeight(10)
-  rect(bX, bY, bW, bH,3)
+  rect(bX, bY, bW, bH,3)  // player box
   fill(255)
   strokeWeight(0)
+
   drawBoss()
-  bossHealth(bhp)
-  bossName("Your Mom")
-  drawPlayer(pX, pY, pW, pH)
-  movePlayer()
+  bossBar("placeHolder", bhp)
+  player(pX, pY, pW, pH)
+
+  bulletIndex = 0
+  while(bulletIndex < ammo) {
+    bulletIndex += 1
+  }
 }
 
 function drawBoss() {
   rect(300, 100, 50, 50)
 }
 
-function bossHealth(hp) {
+function bossBar(name, hp) {
   fill('red');
   rect(300, 15, hp, 20);
-  fill(255)
-  stroke(0)
-}
-
-function bossName(name) {
-  fill("red");
   textSize(32)
   text(name, 300, 50);
   textSize(14)
   fill(255)
 }
 
-function drawPlayer(x, y, w, h) {
-  rect(x, y, w, h)
-}
-
-function movePlayer() {  // player movement
+function player(x, y, w, h) {
+  rect(x, y, w, h)  // draw player
+// player movement
   if(keyIsDown(65) == true) {  // A
     pX -= 10
   }
@@ -76,7 +75,8 @@ function movePlayer() {  // player movement
   if(keyIsDown(83) == true) {  // S
     pY += 10
   }
-  if(pX + pW / 2 >= bX + bW / 2) {  // restrictions   // right wall
+  // restriction
+  if(pX + pW / 2 >= bX + bW / 2) {  // right wall
     pX = bX + bW / 2 - pW / 2
   }
   if(pX - pW / 2 <= bX - bW / 2) {  // left wall
