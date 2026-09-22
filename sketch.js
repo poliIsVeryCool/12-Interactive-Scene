@@ -4,17 +4,20 @@
 
 // Variable Delcare
 let bhp = 500
+
 let pX = 300
-let pY = 750
+let pY = 450
 let pW = 50
 let pH = 80
 
+let bX = 300
+let bY = 450
+let bW = 500
+let bH = 500
 
 function setup() {
-  //This function get run once at the start of the program
   createCanvas(600, 800);
   background(0);
-  // ellipseMode(CORNER);
   ellipseMode(CENTER);
   rectMode(CENTER);
   textAlign(CENTER, CENTER);
@@ -24,6 +27,12 @@ function setup() {
 
 function draw() {
   background(0);
+  noFill()
+  stroke(255)
+  strokeWeight(10)
+  rect(bX, bY, bW, bH,3)
+  fill(255)
+  strokeWeight(0)
   drawBoss()
   bossHealth(bhp)
   bossName("Your Mom")
@@ -37,7 +46,7 @@ function drawBoss() {
 
 function bossHealth(hp) {
   fill('red');
-  rect(300, 15, hp, 20, 10);
+  rect(300, 15, hp, 20);
   fill(255)
   stroke(0)
 }
@@ -67,10 +76,16 @@ function movePlayer() {  // player movement
   if(keyIsDown(83) == true) {  // S
     pY += 10
   }
-  if((pX + pW / 2) >= width) {
-    pX = width - pW / 2
+  if(pX + pW / 2 >= bX + bW / 2) {  // restrictions   // right wall
+    pX = bX + bW / 2 - pW / 2
   }
-  if((pX - pW / 2) <= 0) {
-    pX = 0 + pW / 2
+  if(pX - pW / 2 <= bX - bW / 2) {  // left wall
+    pX = bX - bW / 2 + pW / 2
+  }
+  if(pY + pH / 2 >= bY + bH / 2) {  // bottom wall
+    pY = bY + bH / 2 - pH / 2
+  }
+  if(pY - pH / 2 <= bY - bH / 2) {  // top wall
+    pY = bY - bH / 2 + pH / 2
   }
 }
