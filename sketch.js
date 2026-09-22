@@ -6,6 +6,8 @@
 let bhp = 500
 let pX = 300
 let pY = 750
+let pW = 50
+let pH = 80
 
 
 function setup() {
@@ -25,7 +27,7 @@ function draw() {
   drawBoss()
   bossHealth(bhp)
   bossName("Your Mom")
-  drawPlayer(pX, pY)
+  drawPlayer(pX, pY, pW, pH)
   movePlayer()
 }
 
@@ -48,8 +50,8 @@ function bossName(name) {
   fill(255)
 }
 
-function drawPlayer(x, y) {
-  rect(x, y, 50, 80)
+function drawPlayer(x, y, w, h) {
+  rect(x, y, w, h)
 }
 
 function movePlayer() {  // player movement
@@ -65,5 +67,10 @@ function movePlayer() {  // player movement
   if(keyIsDown(83) == true) {  // S
     pY += 10
   }
-  //restrictions
+  if((pX + pW / 2) >= width) {
+    pX = width - pW / 2
+  }
+  if((pX - pW / 2) <= 0) {
+    pX = 0 + pW / 2
+  }
 }
