@@ -19,8 +19,8 @@ let bW = 500
 let bH = 500
 
 let ammo = 6
-let bulletX = []
-let bulletY = []
+let bulletX 
+let bulletY
 let fired = false
 let fireCooldown = 60
 
@@ -39,13 +39,11 @@ function setup() {
   textFont("bazooka");
   textSize(20)
   frameRate(60);
-  // load imgs 
+  // load imgs
 }
 
 function draw() {
   background(0);
-  
-  // vectors
 
   noFill()
   stroke(255)
@@ -62,14 +60,17 @@ function draw() {
 
   let bulletIndex = 0
   while (bulletIndex < ammo) {  // ammo display
-    fill("yellow")
-    rect((bulletIndex + 1) * 30, 750, 20, 50)
-    fill(255)
+    drawBullet((bulletIndex + 1) * 30, 750)
     bulletIndex += 1
   }
 
   if (frameCount >= timeCheck + fireCooldown) {
     fired = false
+  }
+
+  if(fired == true) {
+    drawBullet(bulletX, bulletY)
+    moveBullet()
   }
 }
 
@@ -142,10 +143,23 @@ function playerHealthBar(x, y, maxhp, hp) {
 
 }
 
+function drawBullet(x, y) {
+  fill('yellow')
+  rect(x, y, 20, 50)
+  fill(255)
+}
+
+function moveBullet() {
+  bulletX -= (pX - mouseX) / 10
+  bulletY -= (pY - mouseY) / 10
+}
+
 function mousePressed() {
   if (ammo > 0 && fired == false) {
     ammo -= 1
     fired = true
     timeCheck = frameCount
+    bulletX = pX
+    bulletY = pY
   }
 }
