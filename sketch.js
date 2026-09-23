@@ -19,10 +19,12 @@ let bW = 500
 let bH = 500
 
 let ammo = 6
+let bulletX = []
+let bulletY = []
 let fired = false
 let fireCooldown = 60
 
-let bulletImg = []
+let bulletImgs = []
 let bossImgs = []
 let playerImgs = []
 
@@ -42,6 +44,8 @@ function setup() {
 
 function draw() {
   background(0);
+  
+  // vectors
 
   noFill()
   stroke(255)
