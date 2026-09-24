@@ -9,14 +9,15 @@ let bossY = 150
 let bossW = 50
 let bossH = 50
 let maxBossHealth = 500
-let bossHealth = 300
+let bossHealth = 500
+let bossHit = false
 
 let pX = 300
 let pY = 450
 let pW = 50
 let pH = 50
 let maxPlayerHealth = 100
-let playerHealth = 70
+let playerHealth = 100
 
 let bX = 300
 let bY = 450
@@ -62,15 +63,8 @@ function setup() {
 function draw() {
   background(0);
 
-  bulletVel = oldMousePos.sub(oldPlayerPos)  // direction the bullet will move
-  bulletVel.setMag(5)   // fixed speed bullet trravel
-  console.log(bulletVel.x)
-  text(bulletVel, 300, 500)  // delete this later
-  text(oldMousePos.x, 300, 550)
-  text(oldMousePos.y, 300, 600)
-
-  // oldPlayerPos = createVector(pX, pY)
-  // oldMousePos = createVector(mouseX, mouseY) // delete this later
+  bulletVel = p5.Vector.sub(oldMousePos, oldPlayerPos)
+  bulletVel.setMag(20)   // fixed speed bullet trravel
 
   noFill()
   stroke(255)
@@ -82,7 +76,7 @@ function draw() {
   drawBoss(bossX, bossY, bossW, bossH)
   bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)  // call boss bar
 
-  attack(4)  // boss attack
+  attack()  // boss attack
 
   player(pX, pY, pW, pH)
   playerHealthBar(400, 750, maxPlayerHealth, playerHealth)   // call player hp bar
@@ -95,6 +89,7 @@ function draw() {
 
   if (bulletPos.x - 10 > width || bulletPos.x + 10 < 0 || bulletPos.y - 40 > height || bulletPos.y + 40 < 0) {
     fired = false  // delete bullet when off screen
+    bossHit = false
   }
 
   if (fired == true) {
@@ -102,7 +97,12 @@ function draw() {
     moveBullet()
   }
 
-  if(keyIsDown(82) && ammo == 0) {
+  if(bulletPos.x + 10 > bossX - bossW / 2 && bulletPos.x - 10 < bossX + bossW / 2 && bulletPos.y - 40 < bossY + bossH / 2 && bulletPos.y + 40 > bossY - bossH / 2 && bossHit == false) {
+    bossHealth -= 20
+    bossHit = !bossHit
+  }
+
+  if(keyIsDown(32) && ammo == 0) {  // reload
     ammo = 6
   }
 }
@@ -229,10 +229,12 @@ function mousePressed() {
   if (ammo > 0 && fired == false) {
     ammo -= 1
     oldPlayerPos.set(pX, pY)
-    // oldMousePos.set(mouseX, mouseY)
-    oldMousePos.x = mouseX
-    oldMousePos.y = mouseY
+    oldMousePos.set(mouseX, mouseY)
     bulletPos.set(pX, pY)
     fired = true
   }
+}
+
+function keyPressed() {
+  console.log(keyCode)
 }
