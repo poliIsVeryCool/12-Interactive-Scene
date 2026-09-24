@@ -1,8 +1,13 @@
 // Project Title   Interactive Project
 // Your Name(s)    Policron Willard Aggabao
 // Date            September 21st
+// I bit off more that I could chew for this one
 
 // Variables Delcared
+let bossX = 300
+let bossY = 150
+let bossW = 50
+let bossH = 50
 let maxBossHealth = 500
 let bossHealth = 300
 
@@ -22,7 +27,6 @@ let ammo = 6
 let bulletX
 let bulletY
 let fired = false
-let fireCooldown = 60
 
 let bulletImg
 let bossImgs = []
@@ -62,9 +66,11 @@ function draw() {
   bulletVel.setMag(5)   // fixed speed bullet trravel
   console.log(bulletVel.x)
   text(bulletVel, 300, 500)  // delete this later
+  text(oldMousePos.x, 300, 550)
+  text(oldMousePos.y, 300, 600)
 
-  oldPlayerPos = createVector(pX, pY)
-  oldMousePos = createVector(mouseX, mouseY) // delete this later
+  // oldPlayerPos = createVector(pX, pY)
+  // oldMousePos = createVector(mouseX, mouseY) // delete this later
 
   noFill()
   stroke(255)
@@ -73,8 +79,10 @@ function draw() {
   fill(255)
   strokeWeight(0)
 
-  drawBoss(300, 150)
+  drawBoss(bossX, bossY, bossW, bossH)
   bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)  // call boss bar
+
+  attack(4)  // boss attack
 
   player(pX, pY, pW, pH)
   playerHealthBar(400, 750, maxPlayerHealth, playerHealth)   // call player hp bar
@@ -86,7 +94,7 @@ function draw() {
   }
 
   if (bulletPos.x - 10 > width || bulletPos.x + 10 < 0 || bulletPos.y - 40 > height || bulletPos.y + 40 < 0) {
-    fired = false
+    fired = false  // delete bullet when off screen
   }
 
   if (fired == true) {
@@ -99,9 +107,9 @@ function draw() {
   }
 }
 
-function drawBoss(x, y) {
+function drawBoss(x, y, w, h) {
   fill('red')
-  rect(x, y, 50, 50)
+  rect(x, y, w, h)
   fill(255)
 }
 
@@ -119,6 +127,45 @@ function bossBar(x, y, name, maxHP, hp) {
   text(hp, x - 20, y + 25)
   text("/", x, y + 25)
   text(maxHP, x + 20, y + 25)
+}
+
+function attack(number) {
+  if(number == 1) {  // left hit
+    noFill()
+    stroke("red")
+    strokeWeight(10)
+    rect(bX - bW / 4, bY, bW / 2, bH)
+    strokeWeight(0)
+    stroke(255)
+    fill(255)
+  }
+  if(number == 2) {  // right hit
+    noFill()
+    stroke("red")
+    strokeWeight(10)
+    rect(bX + bW / 4, bY, bW / 2, bH)
+    strokeWeight(0)
+    stroke(255)
+    fill(255)
+  }
+  if(number == 3) {  // top hit
+    noFill()
+    stroke("red")
+    strokeWeight(10)
+    rect(bX, bY - bH / 4, bW, bH / 2)
+    strokeWeight(0)
+    stroke(255)
+    fill(255)
+  }
+  if(number == 4) {  // bottom hit
+    noFill()
+    stroke("red")
+    strokeWeight(10)
+    rect(bX, bY + bH / 4, bW, bH / 2)
+    strokeWeight(0)
+    stroke(255)
+    fill(255)
+  }
 }
 
 function player(x, y, w, h) {
@@ -182,7 +229,9 @@ function mousePressed() {
   if (ammo > 0 && fired == false) {
     ammo -= 1
     oldPlayerPos.set(pX, pY)
-    oldMousePos.set(mouseX, mouseY)
+    // oldMousePos.set(mouseX, mouseY)
+    oldMousePos.x = mouseX
+    oldMousePos.y = mouseY
     bulletPos.set(pX, pY)
     fired = true
   }
