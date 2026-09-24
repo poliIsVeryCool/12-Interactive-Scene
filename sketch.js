@@ -19,7 +19,7 @@ let bW = 500
 let bH = 500
 
 let ammo = 6
-let bulletX 
+let bulletX
 let bulletY
 let fired = false
 let fireCooldown = 60
@@ -29,6 +29,11 @@ let bossImgs = []
 let playerImgs = []
 
 let timeCheck = 0
+
+let bulletPos
+let bulletVel
+let oldPlayerPos
+let oldMousePos
 
 function setup() {
   createCanvas(600, 800);
@@ -40,10 +45,19 @@ function setup() {
   textSize(20)
   frameRate(60);
   // load imgs
+
+  // vectors 
+  bulletPos = createVector(pX, pY)
+  bulletVel = createVector(0, 0)
+  oldPlayerPos = createVector(pX, pY)
+  oldMousePos = createVector(mouseX, mouseY)
 }
 
 function draw() {
   background(0);
+
+  bulletVel = oldMousePos.sub(oldPlayerPos)  // direction the bullet will move
+  bulletVel.setMag(5)   // fixed speed bullet trravel
 
   noFill()
   stroke(255)
@@ -53,10 +67,10 @@ function draw() {
   strokeWeight(0)
 
   drawBoss(300, 150)
-  bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)
+  bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)  // call boss bar
 
   player(pX, pY, pW, pH)
-  playerHealthBar(400, 750, maxPlayerHealth, playerHealth)
+  playerHealthBar(400, 750, maxPlayerHealth, playerHealth)   // call player hp bar
 
   let bulletIndex = 0
   while (bulletIndex < ammo) {  // ammo display
@@ -64,12 +78,12 @@ function draw() {
     bulletIndex += 1
   }
 
-  if (frameCount >= timeCheck + fireCooldown) {
+  if (frameCount >= timeCheck + fireCooldown) {  // fire cooldown
     fired = false
   }
 
-  if(fired == true) {
-    drawBullet(bulletX, bulletY)
+  if (fired == true) {
+    drawBullet(bulletPos.x, bulletPos.y)
     moveBullet()
   }
 }
@@ -150,16 +164,16 @@ function drawBullet(x, y) {
 }
 
 function moveBullet() {
-  bulletX -= (pX - mouseX) / 10
-  bulletY -= (pY - mouseY) / 10
+  bulletPos = bulletPos.add(bulletVel)
 }
 
 function mousePressed() {
   if (ammo > 0 && fired == false) {
     ammo -= 1
-    fired = true
     timeCheck = frameCount
-    bulletX = pX
-    bulletY = pY
+    oldPlayerPos.set(pX, pY)
+    oldMousePos.set(mouseX, mouseY)
+    bulletPos.set(pX, pY)
+    fired = true
   }
 }
