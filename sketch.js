@@ -60,6 +60,11 @@ function draw() {
 
   bulletVel = oldMousePos.sub(oldPlayerPos)  // direction the bullet will move
   bulletVel.setMag(5)   // fixed speed bullet trravel
+  console.log(bulletVel.x)
+  text(bulletVel, 300, 500)  // delete this later
+
+  oldPlayerPos = createVector(pX, pY)
+  oldMousePos = createVector(mouseX, mouseY) // delete this later
 
   noFill()
   stroke(255)
@@ -80,7 +85,7 @@ function draw() {
     bulletIndex += 1
   }
 
-  if (frameCount >= timeCheck + fireCooldown) {  // fire cooldown
+  if (bulletPos.x - 10 > width || bulletPos.x + 10 < 0 || bulletPos.y - 40 > height || bulletPos.y + 40 < 0) {
     fired = false
   }
 
@@ -176,7 +181,6 @@ function moveBullet() {
 function mousePressed() {
   if (ammo > 0 && fired == false) {
     ammo -= 1
-    timeCheck = frameCount
     oldPlayerPos.set(pX, pY)
     oldMousePos.set(mouseX, mouseY)
     bulletPos.set(pX, pY)
