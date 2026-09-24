@@ -24,7 +24,7 @@ let bulletY
 let fired = false
 let fireCooldown = 60
 
-let bulletImgs = []
+let bulletImg
 let bossImgs = []
 let playerImgs = []
 
@@ -43,11 +43,13 @@ function setup() {
   textAlign(CENTER, CENTER);
   textFont("bazooka");
   textSize(20)
+  imageMode(CENTER)
   frameRate(60);
   // load imgs
+  bulletImg = loadImage("bullet.png")
 
   // vectors 
-  bulletPos = createVector(pX, pY)
+  bulletPos = createVector(pX, pY)  // cordinate relative to origin
   bulletVel = createVector(0, 0)
   oldPlayerPos = createVector(pX, pY)
   oldMousePos = createVector(mouseX, mouseY)
@@ -74,7 +76,7 @@ function draw() {
 
   let bulletIndex = 0
   while (bulletIndex < ammo) {  // ammo display
-    drawBullet((bulletIndex + 1) * 30, 750)
+    drawBullet((bulletIndex + 1) * 30 + 25, 750)
     bulletIndex += 1
   }
 
@@ -83,8 +85,12 @@ function draw() {
   }
 
   if (fired == true) {
-    drawBullet(bulletPos.x, bulletPos.y)
+    drawBullet(bulletPos.x, bulletPos.y)  // moves fired bullet
     moveBullet()
+  }
+
+  if(keyIsDown(82) && ammo == 0) {
+    ammo = 6
   }
 }
 
@@ -159,7 +165,7 @@ function playerHealthBar(x, y, maxhp, hp) {
 
 function drawBullet(x, y) {
   fill('yellow')
-  rect(x, y, 20, 50)
+  image(bulletImg, x, y, 20, 80)
   fill(255)
 }
 
