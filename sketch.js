@@ -191,11 +191,11 @@ function bossBar(x, y, name, maxHP, hp) {
 }
 
 function attack(number) {
-  if (number == 1) {  // left hit
-    noFill()
+  noFill()
     stroke("red")
     strokeWeight(10)
-    textSize(40)
+    textSize(90)
+  if (number == 1) {  // left hit
     if (timeChecked == false) {
       timeCheck = frameCount
       timeChecked = !timeChecked
@@ -213,17 +213,9 @@ function attack(number) {
     }
     rect(bX - bW / 4, bY, bW / 2, bH)
     text("!", bX - bW / 4, bY)
-    textSize(20)
-    strokeWeight(0)
-    stroke(255)
-    fill(255)
   }
 
   if (number == 2) {  // right hit
-    noFill()
-    stroke("red")
-    strokeWeight(10)
-    textSize(40)
     if (timeChecked == false) {
       timeCheck = frameCount
       timeChecked = !timeChecked
@@ -241,17 +233,9 @@ function attack(number) {
     }
     rect(bX + bW / 4, bY, bW / 2, bH)
     text("!", bX + bW / 4, bY)
-    textSize(20)
-    strokeWeight(0)
-    stroke(255)
-    fill(255)
   }
 
   if (number == 3) {  // top hit
-    noFill()
-    stroke("red")
-    strokeWeight(10)
-    textSize(40)
     if (timeChecked == false) {
       timeCheck = frameCount
       timeChecked = !timeChecked
@@ -269,24 +253,16 @@ function attack(number) {
     }
     rect(bX, bY - bH / 4, bW, bH / 2)
     text("!", bX, bY - bH / 4)
-    textSize(20)
-    strokeWeight(0)
-    stroke(255)
-    fill(255)
   }
 
   if (number == 4) {  // bottom hit
-    noFill()
-    stroke("red")
-    strokeWeight(10)
-    textSize(40)
     if (timeChecked == false) {
       timeCheck = frameCount
       timeChecked = !timeChecked
     }
     if (frameCount >= timeCheck + 60) {
       fill("red")
-      if (pY - pH / 2 < bY) { // hit box
+      if (pY + pH / 2 > bY) { // hit box
         playerHealth -= 10
         timeChecked = false
         attacked = !attacked
@@ -297,14 +273,18 @@ function attack(number) {
     }
     rect(bX, bY + bH / 4, bW, bH / 2)
     text("!", bX, bY + bH / 4)
-    textSize(20)
-    strokeWeight(0)
-    stroke(255)
-    fill(255)
   }
+  textSize(20)
+  strokeWeight(0)
+  stroke(255)
+  fill(255)
 
-  if(number == 5) {
-    
+  if (number == 5) {
+    fill(255)
+    let projectileIndex = 0
+    while(projectileIndex <= 5) {
+      circle((bX - bW / 2) + (projectileIndex * 100))
+    }
   }
 }
 
