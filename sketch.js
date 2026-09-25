@@ -69,8 +69,6 @@ function setup() {
 function draw() {
   background(0);
 
-  text(attackNumber, 300, 300)
-
   bulletVel = p5.Vector.sub(oldMousePos, oldPlayerPos)
   bulletVel.setMag(20)   // fixed speed bullet trravel
   if (win == false && lose == false) {
@@ -120,8 +118,8 @@ function draw() {
     }
 
     if (bulletPos.x + 10 > bossX - bossW / 2 && bulletPos.x - 10 < bossX + bossW / 2 && bulletPos.y - 40 < bossY + bossH / 2 && bulletPos.y + 40 > bossY - bossH / 2 && bossHit == false) {
-      bossHealth -= 20
-      bossHit = !bossHit
+      bossHealth -= 5
+      bossHit = !bossHit  // boss hit box
     }
 
     if (keyIsDown(32) && ammo == 0) {  // reload
@@ -306,7 +304,7 @@ function attack(number) {
   }
 
   if(number == 5) {
-    //67
+    
   }
 }
 
