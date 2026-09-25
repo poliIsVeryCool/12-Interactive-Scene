@@ -11,6 +11,7 @@ let bossH = 50
 let maxBossHealth = 500
 let bossHealth = 500
 let bossHit = false
+let attackNumber = 1
 let attacked = false
 
 let pX = 300
@@ -68,98 +69,103 @@ function setup() {
 function draw() {
   background(0);
 
+  text(attackNumber, 300, 300)
+
   bulletVel = p5.Vector.sub(oldMousePos, oldPlayerPos)
   bulletVel.setMag(20)   // fixed speed bullet trravel
-if(win == false && lose == false) {
-  noFill()
-  stroke(255)
-  strokeWeight(10)
-  rect(bX, bY, bW, bH)  // player box
-  fill(255)
-  strokeWeight(0)
+  if (win == false && lose == false) {
+    noFill()
+    stroke(255)
+    strokeWeight(10)
+    rect(bX, bY, bW, bH)  // player box
+    fill(255)
+    strokeWeight(0)
 
-  drawBoss(bossX, bossY, bossW, bossH)
-  bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)  // call boss bar
+    drawBoss(bossX, bossY, bossW, bossH)
+    bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)  // call boss bar
 
-  if(attacked == false) {
-  attack(1)  // boss attack
-  }
-
-  if(attacked == true) {
-    if(timeChecked == false) {
-      timeCheck = frameCount
-      timeChecked = !timeChecked
+    if (attacked == false) {
+      attack(attackNumber)  // boss attack
     }
-    if(frameCount >= timeCheck + 180) {
-      timeChecked = false
-      attacked = !attacked
+
+    if (attacked == true) {
+      if (timeChecked == false) {
+        timeCheck = frameCount
+        timeChecked = !timeChecked
+      }
+      if (frameCount >= timeCheck + 60) {
+        timeChecked = false
+        attackNumber = random([1, 2, 3, 4])
+        attacked = !attacked
+      }
+    }
+
+    player(pX, pY, pW, pH)
+    playerHealthBar(400, 750, maxPlayerHealth, playerHealth)   // call player hp bar
+
+    let bulletIndex = 0
+    while (bulletIndex < ammo) {  // ammo display
+      drawBullet((bulletIndex + 1) * 30 + 25, 750)
+      bulletIndex += 1
+    }
+
+    if (bulletPos.x - 10 > width || bulletPos.x + 10 < 0 || bulletPos.y - 40 > height || bulletPos.y + 40 < 0) {
+      fired = false  // delete bullet when off screen
+      bossHit = false
+    }
+
+    if (fired == true) {
+      drawBullet(bulletPos.x, bulletPos.y)  // moves fired bullet
+      moveBullet()
+    }
+
+    if (bulletPos.x + 10 > bossX - bossW / 2 && bulletPos.x - 10 < bossX + bossW / 2 && bulletPos.y - 40 < bossY + bossH / 2 && bulletPos.y + 40 > bossY - bossH / 2 && bossHit == false) {
+      bossHealth -= 20
+      bossHit = !bossHit
+    }
+
+    if (keyIsDown(32) && ammo == 0) {  // reload
+      ammo = 6
     }
   }
 
-  player(pX, pY, pW, pH)
-  playerHealthBar(400, 750, maxPlayerHealth, playerHealth)   // call player hp bar
-
-  let bulletIndex = 0
-  while (bulletIndex < ammo) {  // ammo display
-    drawBullet((bulletIndex + 1) * 30 + 25, 750)
-    bulletIndex += 1
-  }
-
-  if (bulletPos.x - 10 > width || bulletPos.x + 10 < 0 || bulletPos.y - 40 > height || bulletPos.y + 40 < 0) {
-    fired = false  // delete bullet when off screen
-    bossHit = false
-  }
-
-  if (fired == true) {
-    drawBullet(bulletPos.x, bulletPos.y)  // moves fired bullet
-    moveBullet()
-  }
-
-  if(bulletPos.x + 10 > bossX - bossW / 2 && bulletPos.x - 10 < bossX + bossW / 2 && bulletPos.y - 40 < bossY + bossH / 2 && bulletPos.y + 40 > bossY - bossH / 2 && bossHit == false) {
-    bossHealth -= 20
-    bossHit = !bossHit
-  }
-
-  if(keyIsDown(32) && ammo == 0) {  // reload
-    ammo = 6
-  }
-}
-
-  if(win == true) {  // win screen
+  if (win == true) {  // win screen
     background(0)
     textSize(40)
     text("YOU WIN", 300, 400)
     textSize(20)
-    text('press "r" to restart' , 300, 450)
-    if(keyIsDown(82)) {
+    text('press "r" to restart', 300, 450)
+    if (keyIsDown(82)) {
       bossHealth = 500
       playerHealth = 100
       pX = bX
       pY = bY
+      attacked == true
       win = false
     }
   }
 
-  if(lose == true) {
+  if (lose == true) {
     background(0)
     textSize(40)
     text("YOU LOSE", 300, 400)
     textSize(20)
-    text('press "r" to restart' , 300, 450)
-    if(keyIsDown(82)) {
+    text('press "r" to restart', 300, 450)
+    if (keyIsDown(82)) {
       bossHealth = 500
       playerHealth = 100
       pX = bX
       pY = bY
+      attacked == true
       lose = false
     }
   }
 
-  if(bossHealth <= 0) {
+  if (bossHealth <= 0) {
     win = true
   }
 
-  if(playerHealth <= 0) {
+  if (playerHealth <= 0) {
     lose = true
   }
 }
@@ -187,20 +193,18 @@ function bossBar(x, y, name, maxHP, hp) {
 }
 
 function attack(number) {
-  if(number == 1) {  // left hit
+  if (number == 1) {  // left hit
     noFill()
     stroke("red")
     strokeWeight(10)
     textSize(40)
-    rect(bX - bW / 4, bY, bW / 2, bH)
-    text("!", bX - bW / 4, bY)
-    if(timeChecked == false) {
-    timeCheck = frameCount
-    timeChecked = !timeChecked
+    if (timeChecked == false) {
+      timeCheck = frameCount
+      timeChecked = !timeChecked
     }
-    if(frameCount >= timeCheck + 60) {
+    if (frameCount >= timeCheck + 60) {
       fill("red")
-      if(pX - pW / 2 < bX) {
+      if (pX - pW / 2 < bX) {// hit box
         playerHealth -= 10
         timeChecked = false
         attacked = !attacked
@@ -209,34 +213,90 @@ function attack(number) {
         attacked = !attacked
       }
     }
+    rect(bX - bW / 4, bY, bW / 2, bH)
+    text("!", bX - bW / 4, bY)
     textSize(20)
     strokeWeight(0)
     stroke(255)
     fill(255)
   }
-  if(number == 2) {  // right hit
+  if (number == 2) {  // right hit
     noFill()
     stroke("red")
     strokeWeight(10)
+    textSize(40)
+    if (timeChecked == false) {
+      timeCheck = frameCount
+      timeChecked = !timeChecked
+    }
+    if (frameCount >= timeCheck + 60) {
+      fill("red")
+      if (pX + pW / 2 > bX) { // hit box
+        playerHealth -= 10
+        timeChecked = false
+        attacked = !attacked
+      } else {
+        timeChecked = false
+        attacked = !attacked
+      }
+    }
     rect(bX + bW / 4, bY, bW / 2, bH)
+    text("!", bX + bW / 4, bY)
+    textSize(20)
     strokeWeight(0)
     stroke(255)
     fill(255)
   }
-  if(number == 3) {  // top hit
+  if (number == 3) {  // top hit
     noFill()
     stroke("red")
     strokeWeight(10)
+    textSize(40)
+    if (timeChecked == false) {
+      timeCheck = frameCount
+      timeChecked = !timeChecked
+    }
+    if (frameCount >= timeCheck + 60) {
+      fill("red")
+      if (pY - pH / 2 < bY) { // hit box
+        playerHealth -= 10
+        timeChecked = false
+        attacked = !attacked
+      } else {
+        timeChecked = false
+        attacked = !attacked
+      }
+    }
     rect(bX, bY - bH / 4, bW, bH / 2)
+    text("!", bX, bY - bH / 4)
+    textSize(20)
     strokeWeight(0)
     stroke(255)
     fill(255)
   }
-  if(number == 4) {  // bottom hit
+  if (number == 4) {  // bottom hit
     noFill()
     stroke("red")
     strokeWeight(10)
-    rect(bX, bY + bH / 4, bW, bH / 2)
+    textSize(40)
+    if (timeChecked == false) {
+      timeCheck = frameCount
+      timeChecked = !timeChecked
+    }
+    if (frameCount >= timeCheck + 60) {
+      fill("red")
+      if (pX - pW / 2 < bX) { // hit box
+        playerHealth -= 10
+        timeChecked = false
+        attacked = !attacked
+      } else {
+        timeChecked = false
+        attacked = !attacked
+      }
+    }
+    rect(bX - bW / 4, bY, bW / 2, bH)
+    text("!", bX - bW / 4, bY)
+    textSize(20)
     strokeWeight(0)
     stroke(255)
     fill(255)
