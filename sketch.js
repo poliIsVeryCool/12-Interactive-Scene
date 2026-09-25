@@ -12,7 +12,7 @@ let maxBossHealth = 500
 let bossHealth = 500
 let bossHit = false
 let attackNumber = 1
-let attacked = false
+let attacked = true
 
 let pX = 300
 let pY = 450
@@ -145,7 +145,7 @@ function draw() {
     }
   }
 
-  if (lose == true) {
+  if (lose == true) {  // lose screen
     background(0)
     textSize(40)
     text("YOU LOSE", 300, 400)
@@ -161,11 +161,11 @@ function draw() {
     }
   }
 
-  if (bossHealth <= 0) {
+  if (bossHealth <= 0) {  // win con
     win = true
   }
 
-  if (playerHealth <= 0) {
+  if (playerHealth <= 0) {  // lose con
     lose = true
   }
 }
@@ -220,6 +220,7 @@ function attack(number) {
     stroke(255)
     fill(255)
   }
+
   if (number == 2) {  // right hit
     noFill()
     stroke("red")
@@ -247,6 +248,7 @@ function attack(number) {
     stroke(255)
     fill(255)
   }
+
   if (number == 3) {  // top hit
     noFill()
     stroke("red")
@@ -274,6 +276,7 @@ function attack(number) {
     stroke(255)
     fill(255)
   }
+
   if (number == 4) {  // bottom hit
     noFill()
     stroke("red")
@@ -285,7 +288,7 @@ function attack(number) {
     }
     if (frameCount >= timeCheck + 60) {
       fill("red")
-      if (pX - pW / 2 < bX) { // hit box
+      if (pY - pH / 2 < bY) { // hit box
         playerHealth -= 10
         timeChecked = false
         attacked = !attacked
@@ -294,12 +297,16 @@ function attack(number) {
         attacked = !attacked
       }
     }
-    rect(bX - bW / 4, bY, bW / 2, bH)
-    text("!", bX - bW / 4, bY)
+    rect(bX, bY + bH / 4, bW, bH / 2)
+    text("!", bX, bY + bH / 4)
     textSize(20)
     strokeWeight(0)
     stroke(255)
     fill(255)
+  }
+
+  if(number == 5) {
+    //67
   }
 }
 
