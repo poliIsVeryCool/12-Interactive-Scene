@@ -11,6 +11,7 @@ let bossH = 50
 let maxBossHealth = 500
 let bossHealth = 500
 let bossHit = false
+let attacked = false
 
 let pX = 300
 let pY = 450
@@ -34,11 +35,15 @@ let bossImgs = []
 let playerImgs = []
 
 let timeCheck = 0
+let timeChecked = false
 
 let bulletPos
 let bulletVel
 let oldPlayerPos
 let oldMousePos
+
+let win = false
+let lose = false
 
 function setup() {
   createCanvas(600, 800);
@@ -65,7 +70,7 @@ function draw() {
 
   bulletVel = p5.Vector.sub(oldMousePos, oldPlayerPos)
   bulletVel.setMag(20)   // fixed speed bullet trravel
-
+if(win == false && lose == false) {
   noFill()
   stroke(255)
   strokeWeight(10)
@@ -76,7 +81,20 @@ function draw() {
   drawBoss(bossX, bossY, bossW, bossH)
   bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)  // call boss bar
 
-  attack()  // boss attack
+  if(attacked == false) {
+  attack(1)  // boss attack
+  }
+
+  if(attacked == true) {
+    if(timeChecked == false) {
+      timeCheck = frameCount
+      timeChecked = !timeChecked
+    }
+    if(frameCount >= timeCheck + 180) {
+      timeChecked = false
+      attacked = !attacked
+    }
+  }
 
   player(pX, pY, pW, pH)
   playerHealthBar(400, 750, maxPlayerHealth, playerHealth)   // call player hp bar
@@ -107,6 +125,45 @@ function draw() {
   }
 }
 
+  if(win == true) {  // win screen
+    background(0)
+    textSize(40)
+    text("YOU WIN", 300, 400)
+    textSize(20)
+    text('press "r" to restart' , 300, 450)
+    if(keyIsDown(82)) {
+      bossHealth = 500
+      playerHealth = 100
+      pX = bX
+      pY = bY
+      win = false
+    }
+  }
+
+  if(lose == true) {
+    background(0)
+    textSize(40)
+    text("YOU LOSE", 300, 400)
+    textSize(20)
+    text('press "r" to restart' , 300, 450)
+    if(keyIsDown(82)) {
+      bossHealth = 500
+      playerHealth = 100
+      pX = bX
+      pY = bY
+      lose = false
+    }
+  }
+
+  if(bossHealth <= 0) {
+    win = true
+  }
+
+  if(playerHealth <= 0) {
+    lose = true
+  }
+}
+
 function drawBoss(x, y, w, h) {
   fill('red')
   rect(x, y, w, h)
@@ -134,7 +191,25 @@ function attack(number) {
     noFill()
     stroke("red")
     strokeWeight(10)
+    textSize(40)
     rect(bX - bW / 4, bY, bW / 2, bH)
+    text("!", bX - bW / 4, bY)
+    if(timeChecked == false) {
+    timeCheck = frameCount
+    timeChecked = !timeChecked
+    }
+    if(frameCount >= timeCheck + 60) {
+      fill("red")
+      if(pX - pW / 2 < bX) {
+        playerHealth -= 10
+        timeChecked = false
+        attacked = !attacked
+      } else {
+        timeChecked = false
+        attacked = !attacked
+      }
+    }
+    textSize(20)
     strokeWeight(0)
     stroke(255)
     fill(255)
@@ -216,17 +291,15 @@ function playerHealthBar(x, y, maxhp, hp) {
 }
 
 function drawBullet(x, y) {
-  fill('yellow')
   image(bulletImg, x, y, 20, 80)
-  fill(255)
 }
 
 function moveBullet() {
-  bulletPos = bulletPos.add(bulletVel)
+  bulletPos = bulletPos.add(bulletVel)  // moves bullet by adding bullets vel to bullet pos
 }
 
 function mousePressed() {
-  if (ammo > 0 && fired == false) {
+  if (ammo > 0 && fired == false) {  // sets things up to fire the bullet
     ammo -= 1
     oldPlayerPos.set(pX, pY)
     oldMousePos.set(mouseX, mouseY)
@@ -235,6 +308,6 @@ function mousePressed() {
   }
 }
 
-function keyPressed() {
+function keyPressed() {  // logs keyCode
   console.log(keyCode)
 }
