@@ -13,6 +13,8 @@ let bossHealth = 500
 let bossHit = false
 let attackNumber = 1
 let attacked = true
+let projectileRow1 = 200
+let projectileRow2 = 600
 
 let pX = 300
 let pY = 450
@@ -83,7 +85,7 @@ function draw() {
     bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)  // call boss bar
 
     if (attacked == false) {
-      attack(attackNumber)  // boss attack
+      attack(5)  // boss attack
     }
 
     if (attacked == true) {
@@ -280,10 +282,16 @@ function attack(number) {
   fill(255)
 
   if (number == 5) {
-    fill(255)
-    let projectileIndex = 0
-    while(projectileIndex <= 5) {
-      circle((bX - bW / 2) + (projectileIndex * 100))
+    fill("blue")
+    let projectileIndex1 = 0
+    while(projectileIndex1 <= 5) {
+      circle((bX - bW / 2) + (projectileIndex1 * 100), projectileRow1, 40)
+      projectileIndex += 1
+    }
+    let projectileIndex2 = 0
+    while(projectileIndex2 <= 4) {
+      circle((bX - bW / 2) + (projectileIndex2 * 100) + 50, projectileRow2, 40)
+      projectileIndex2 += 1
     }
   }
 }
