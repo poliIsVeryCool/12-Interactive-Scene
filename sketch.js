@@ -9,7 +9,7 @@ let bossY = 150
 let bossW = 50
 let bossH = 50
 let maxBossHealth = 500
-let bossHealth = 10
+let bossHealth = 500
 let bossHit = false
 let attackNumber = 1
 let attacked = true
@@ -17,6 +17,10 @@ let projectileRow1 = 200
 let projectileRow1Hit = false
 let projectileRow2 = 700
 let projectileRow2Hit = false
+let projectileRow3 = 50
+let projectileRow3Hit = false
+let projectileRow4 = 550
+let projectileRow4Hit = false
 
 let pX = 300
 let pY = 450
@@ -324,6 +328,24 @@ function attack(number) {
       }
     }
     if (projectileRow1 >= 700 && projectileRow2 <= 200) {
+      attacked = true
+    }
+    fill(255)
+  }
+
+  if (number == 6) {
+    fill("blue")
+    if(projectileRow3 < 550 && projectileRow4 > 50) {
+      let projectileIndex3 = 1
+      while (projectileIndex3 <= 3) {
+
+      }
+      let projectileIndex4 = 1
+      while (projectileIndex4) {
+        
+      }
+    }
+    if(projectileRow3 >= 550 && projectileRow4 <= 50) {
       attacked = true
     }
     fill(255)
