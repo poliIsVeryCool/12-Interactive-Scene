@@ -9,12 +9,14 @@ let bossY = 150
 let bossW = 50
 let bossH = 50
 let maxBossHealth = 500
-let bossHealth = 500
+let bossHealth = 10
 let bossHit = false
 let attackNumber = 1
 let attacked = true
 let projectileRow1 = 200
-let projectileRow2 = 600
+let projectileRow1Hit = false
+let projectileRow2 = 700
+let projectileRow2Hit = false
 
 let pX = 300
 let pY = 450
@@ -32,10 +34,6 @@ let ammo = 6
 let bulletX
 let bulletY
 let fired = false
-
-let bulletImg
-let bossImgs = []
-let playerImgs = []
 
 let timeCheck = 0
 let timeChecked = false
@@ -58,8 +56,6 @@ function setup() {
   textSize(20)
   imageMode(CENTER)
   frameRate(60);
-  // load imgs
-  bulletImg = loadImage("bullet.png")
 
   // vectors 
   bulletPos = createVector(pX, pY)  // cordinate relative to origin
@@ -95,7 +91,11 @@ function draw() {
       }
       if (frameCount >= timeCheck + 60) {
         timeChecked = false
-        attackNumber = random([1, 2, 3, 4])
+        attackNumber = random([1, 2, 3, 4, 5])
+        projectileRow1 = 200
+        projectileRow1Hit = false
+        projectileRow2 = 700
+        projectileRow2Hit = false
         attacked = !attacked
       }
     }
@@ -120,7 +120,7 @@ function draw() {
     }
 
     if (bulletPos.x + 10 > bossX - bossW / 2 && bulletPos.x - 10 < bossX + bossW / 2 && bulletPos.y - 40 < bossY + bossH / 2 && bulletPos.y + 40 > bossY - bossH / 2 && bossHit == false) {
-      bossHealth -= 5
+      bossHealth -= 10
       bossHit = !bossHit  // boss hit box
     }
 
@@ -137,10 +137,19 @@ function draw() {
     text('press "r" to restart', 300, 450)
     if (keyIsDown(82)) {
       bossHealth = 500
+      bossHit = false
       playerHealth = 100
       pX = bX
       pY = bY
+      ammo = 6
+      fired = false
+      bulletPos.set(pX, pY)
       attacked == true
+      projectileRow1 = 200
+      projectileRow1Hit = false
+      projectileRow2 = 700
+      projectileRow2Hit = false
+      timeChecked = false
       win = false
     }
   }
@@ -153,10 +162,19 @@ function draw() {
     text('press "r" to restart', 300, 450)
     if (keyIsDown(82)) {
       bossHealth = 500
+      bossHit = false
       playerHealth = 100
       pX = bX
       pY = bY
+      ammo = 6
+      fired = false
+      bulletPos.set(pX, pY)
       attacked == true
+      projectileRow1 = 200
+      projectileRow1Hit = false
+      projectileRow2 = 700
+      projectileRow2Hit = false
+      timeChecked = false
       lose = false
     }
   }
@@ -194,9 +212,9 @@ function bossBar(x, y, name, maxHP, hp) {
 
 function attack(number) {
   noFill()
-    stroke("red")
-    strokeWeight(10)
-    textSize(90)
+  stroke("red")
+  strokeWeight(10)
+  textSize(90)
   if (number == 1) {  // left hit
     if (timeChecked == false) {
       timeCheck = frameCount
@@ -283,16 +301,32 @@ function attack(number) {
 
   if (number == 5) {
     fill("blue")
-    let projectileIndex1 = 0
-    while(projectileIndex1 <= 5) {
-      circle((bX - bW / 2) + (projectileIndex1 * 100), projectileRow1, 40)
-      projectileIndex += 1
+    if (projectileRow1 < 700 && projectileRow2 > 200) {
+      let projectileIndex1 = 1
+      while (projectileIndex1 <= 3) {
+        rect((bX - bW / 2) + ((projectileIndex1 - 1) * 250), projectileRow1, 100, 15)
+        if (pX - pW / 2 < (bX - bW / 2) + ((projectileIndex1 - 1) * 250) + 50 && pX + pW / 2 > (bX - bW / 2) + ((projectileIndex1 - 1) * 250) - 50 && pY - pH / 2 < projectileRow1 + 7.5 && pY + pH / 2 > projectileRow1 - 7.5 && projectileRow1Hit == false) {
+          projectileRow1Hit = !projectileRow1Hit
+          playerHealth -= 10
+        }
+        projectileRow1 += 2
+        projectileIndex1 += 1
+      }
+      let projectileIndex2 = 1
+      while (projectileIndex2 <= 2) {
+        rect((bX - bW / 2) + ((projectileIndex2 - 1) * 250) + 125, projectileRow2, 100, 15)
+        if (pX - pW / 2 < (bX - bW / 2) + ((projectileIndex2 - 1) * 250) + 175 && pX + pW / 2 > (bX - bW / 2) + ((projectileIndex2 - 1) * 250) + 75 && pY - pH / 2 < projectileRow2 + 7.5 && pY + pH / 2 > projectileRow2 - 7.5 && projectileRow2Hit == false) {
+          projectileRow2Hit = !projectileRow2Hit
+          playerHealth -= 10
+        }
+        projectileRow2 -= 3
+        projectileIndex2 += 1
+      }
     }
-    let projectileIndex2 = 0
-    while(projectileIndex2 <= 4) {
-      circle((bX - bW / 2) + (projectileIndex2 * 100) + 50, projectileRow2, 40)
-      projectileIndex2 += 1
+    if (projectileRow1 >= 700 && projectileRow2 <= 200) {
+      attacked = true
     }
+    fill(255)
   }
 }
 
@@ -344,9 +378,10 @@ function playerHealthBar(x, y, maxhp, hp) {
 }
 
 function drawBullet(x, y) {
-  image(bulletImg, x, y, 20, 80)
+  fill("yellow")
+  rect(x, y, 20, 80)
+  fill(255)
 }
-
 function moveBullet() {
   bulletPos = bulletPos.add(bulletVel)  // moves bullet by adding bullets vel to bullet pos
 }
