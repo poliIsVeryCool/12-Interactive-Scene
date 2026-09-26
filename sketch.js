@@ -47,6 +47,16 @@ let bulletVel
 let oldPlayerPos
 let oldMousePos
 
+let playerPos
+let projectilePos
+let projectileVel
+let projectileAcc
+let projectilePos1
+let projectileVel1
+let projectileAcc1
+let decay = 255
+let decay1 = 255
+
 let win = false
 let lose = false
 
@@ -66,13 +76,19 @@ function setup() {
   bulletVel = createVector(0, 0)
   oldPlayerPos = createVector(pX, pY)
   oldMousePos = createVector(mouseX, mouseY)
+
+  projectilePos = createVector(bX, bY)
+  projectileVel = createVector(0, 0)
+  projectileAcc = createVector(0, 0)
+  projectilePos1 = createVector(bX, bY)
+  projectileVel1 = createVector(0, 0)
+  projectileAcc1 = createVector(0, 0)
+  playerPos = createVector(pX, pY)
 }
 
 function draw() {
   background(0);
 
-  bulletVel = p5.Vector.sub(oldMousePos, oldPlayerPos)
-  bulletVel.setMag(20)   // fixed speed bullet trravel
   if (win == false && lose == false) {
     noFill()
     stroke(255)
@@ -81,11 +97,24 @@ function draw() {
     fill(255)
     strokeWeight(0)
 
+    bulletVel = p5.Vector.sub(oldMousePos, oldPlayerPos)
+    bulletVel.setMag(20)   // fixed speed bullet trravel
+
+    playerPos.set(pX, pY)
+    projectileVel.add(projectileAcc)
+    projectileVel.limit(10)
+    projectileAcc = p5.Vector.sub(playerPos, projectilePos)
+    projectileAcc.setMag(3)
+    projectileVel1.add(projectileAcc)
+    projectileVel1.limit(10)
+    projectileAcc1 = p5.Vector.sub(playerPos, projectilePos1)
+    projectileAcc1.setMag(3)
+
     drawBoss(bossX, bossY, bossW, bossH)
     bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)  // call boss bar
 
     if (attacked == false) {
-      attack(5)  // boss attack
+      attack(7)  // boss attack
     }
 
     if (attacked == true) {
@@ -100,6 +129,12 @@ function draw() {
         projectileRow1Hit = false
         projectileRow2 = 700
         projectileRow2Hit = false
+        projectileRow3 = 50
+        projectileRow3Hit = false
+        projectileRow4 = 550
+        projectileRow4Hit = false
+        decay = 255
+        decay1 = 255
         attacked = !attacked
       }
     }
@@ -153,6 +188,10 @@ function draw() {
       projectileRow1Hit = false
       projectileRow2 = 700
       projectileRow2Hit = false
+      projectileRow3 = 50
+      projectileRow3Hit = false
+      projectileRow4 = 550
+      projectileRow4Hit = false
       timeChecked = false
       win = false
     }
@@ -178,6 +217,10 @@ function draw() {
       projectileRow1Hit = false
       projectileRow2 = 700
       projectileRow2Hit = false
+      projectileRow3 = 50
+      projectileRow3Hit = false
+      projectileRow4 = 550
+      projectileRow4Hit = false
       timeChecked = false
       lose = false
     }
@@ -308,7 +351,7 @@ function attack(number) {
     if (projectileRow1 < 700 && projectileRow2 > 200) {
       let projectileIndex1 = 1
       while (projectileIndex1 <= 3) {
-        rect((bX - bW / 2) + ((projectileIndex1 - 1) * 250), projectileRow1, 100, 15)
+        rect((bX - bW / 2) + (projectileIndex1 - 1) * 250, projectileRow1, 100, 15)
         if (pX - pW / 2 < (bX - bW / 2) + ((projectileIndex1 - 1) * 250) + 50 && pX + pW / 2 > (bX - bW / 2) + ((projectileIndex1 - 1) * 250) - 50 && pY - pH / 2 < projectileRow1 + 7.5 && pY + pH / 2 > projectileRow1 - 7.5 && projectileRow1Hit == false) {
           projectileRow1Hit = !projectileRow1Hit
           playerHealth -= 10
@@ -318,8 +361,8 @@ function attack(number) {
       }
       let projectileIndex2 = 1
       while (projectileIndex2 <= 2) {
-        rect((bX - bW / 2) + ((projectileIndex2 - 1) * 250) + 125, projectileRow2, 100, 15)
-        if (pX - pW / 2 < (bX - bW / 2) + ((projectileIndex2 - 1) * 250) + 175 && pX + pW / 2 > (bX - bW / 2) + ((projectileIndex2 - 1) * 250) + 75 && pY - pH / 2 < projectileRow2 + 7.5 && pY + pH / 2 > projectileRow2 - 7.5 && projectileRow2Hit == false) {
+        rect((bX - bW / 2) + (projectileIndex2 - 1) * 250 + 125, projectileRow2, 100, 15)
+        if (pX - pW / 2 < (bX - bW / 2) + (projectileIndex2 - 1) * 250 + 175 && pX + pW / 2 > (bX - bW / 2) + ((projectileIndex2 - 1) * 250) + 75 && pY - pH / 2 < projectileRow2 + 7.5 && pY + pH / 2 > projectileRow2 - 7.5 && projectileRow2Hit == false) {
           projectileRow2Hit = !projectileRow2Hit
           playerHealth -= 10
         }
@@ -335,17 +378,54 @@ function attack(number) {
 
   if (number == 6) {
     fill("blue")
-    if(projectileRow3 < 550 && projectileRow4 > 50) {
+    if (projectileRow3 < 550 && projectileRow4 > 50) {
       let projectileIndex3 = 1
       while (projectileIndex3 <= 3) {
-
+        rect(projectileRow3, (bY - bH / 2) + (projectileIndex3 - 1) * 250, 15, 100)
+        if (pX - pW / 2 < projectileRow3 + 7.5 && pX + pH / 2 > projectileRow3 - 7.5 && pY - pH / 2 < (bY - bH / 2) + (projectileIndex3 - 1) * 250 + 50 && pY + pH / 2 > (bY - bH / 2) + (projectileIndex3 - 1) * 250 - 50 && projectileRow3Hit == false) {
+          projectileRow3Hit = !projectileRow3Hit
+          playerHealth -= 10
+        }
+        projectileRow3 += 2
+        projectileIndex3 += 1
       }
       let projectileIndex4 = 1
-      while (projectileIndex4) {
-        
+      while (projectileIndex4 <= 2) {
+        rect(projectileRow4, (bY - bH / 2) + (projectileIndex4 - 1) * 250 + 125, 15, 100)
+        if (pX - pW / 2 < projectileRow4 + 7.5 && pX + pH / 2 > projectileRow4 - 7.5 && pY - pH / 2 < (bY - bH / 2) + (projectileIndex4 - 1) * 250 + 175 && pY + pH / 2 > (bY - bH / 2) + (projectileIndex4 - 1) * 250 + 75 && projectileRow4Hit == false) {
+          projectileRow4Hit = !projectileRow4Hit
+          playerHealth -= 10
+        }
+        projectileRow4 -= 3
+        projectileIndex4 += 1
       }
     }
-    if(projectileRow3 >= 550 && projectileRow4 <= 50) {
+    if (projectileRow3 >= 550 && projectileRow4 <= 50) {
+      attacked = true
+    }
+    fill(255)
+  }
+
+  if (number == 7) {
+    if (decay > 0 || decay1 > 0) {
+      projectilePos.add(projectileVel)
+      projectilePos1.add(projectileVel1)
+      fill(255, 0, 255, decay)
+      circle(projectilePos.x, projectilePos.y, 50)
+      fill(0, 255, 255, decay1)
+      circle(projectilePos1.x, projectilePos1.y, 50)
+      if (dist(pX, pY, projectilePos.x, projectilePos.y) < 25 + pW / 2) {
+        playerHealth -= 10
+        decay = 0
+      }
+      if (dist(pX, pY, projectilePos1.x, projectilePos1.y) < 25 + pW / 2) {
+        playerHealth -= 10
+        decay1 = 0
+      }
+        decay -= 1
+        decay1 -= 1
+    }
+    if (decay <= 0 && decay1 <= 0) {
       attacked = true
     }
     fill(255)
