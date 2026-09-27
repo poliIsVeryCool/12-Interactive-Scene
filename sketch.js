@@ -5,6 +5,10 @@
 
 // Variables Delcared
 let bossX = 300
+let previousX = 0
+let bossLocation = [100, 200, 300, 400, 500]
+let bossMoved = 0
+let selection = 0
 let bossY = 150
 let bossW = 50
 let bossH = 50
@@ -12,6 +16,7 @@ let maxBossHealth = 500
 let bossHealth = 500
 let bossHit = false
 let attackNumber = 1
+let attackMode = 1
 let attacked = true
 let projectileRow1 = 200
 let projectileRow1Hit = false
@@ -56,6 +61,8 @@ let projectileVel1
 let projectileAcc1
 let decay = 255
 let decay1 = 255
+let projectileHit = false
+let projectileHit1 = false
 
 let win = false
 let lose = false
@@ -77,10 +84,10 @@ function setup() {
   oldPlayerPos = createVector(pX, pY)
   oldMousePos = createVector(mouseX, mouseY)
 
-  projectilePos = createVector(bX, bY)
+  projectilePos = createVector(bX - bH / 2, bossY)
   projectileVel = createVector(0, 0)
   projectileAcc = createVector(0, 0)
-  projectilePos1 = createVector(bX, bY)
+  projectilePos1 = createVector(bX + bH / 2, bossY)
   projectileVel1 = createVector(0, 0)
   projectileAcc1 = createVector(0, 0)
   playerPos = createVector(pX, pY)
@@ -102,41 +109,57 @@ function draw() {
 
     playerPos.set(pX, pY)
     projectileVel.add(projectileAcc)
-    projectileVel.limit(10)
+    projectileVel.limit(12)
     projectileAcc = p5.Vector.sub(playerPos, projectilePos)
     projectileAcc.setMag(3)
-    projectileVel1.add(projectileAcc)
-    projectileVel1.limit(10)
+    projectileVel1.add(projectileAcc1)
+    projectileVel1.limit(7)
     projectileAcc1 = p5.Vector.sub(playerPos, projectilePos1)
-    projectileAcc1.setMag(3)
+    projectileAcc1.setMag(5)
 
     drawBoss(bossX, bossY, bossW, bossH)
     bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)  // call boss bar
 
     if (attacked == false) {
-      attack(7)  // boss attack
+      attack(attackNumber)  // boss attack
     }
 
     if (attacked == true) {
       if (timeChecked == false) {
         timeCheck = frameCount
         timeChecked = !timeChecked
+        previousX = bossX
+        selection = random(bossLocation)
       }
       if (frameCount >= timeCheck + 60) {
         timeChecked = false
-        attackNumber = random([1, 2, 3, 4, 5])
-        projectileRow1 = 200
-        projectileRow1Hit = false
-        projectileRow2 = 700
-        projectileRow2Hit = false
-        projectileRow3 = 50
-        projectileRow3Hit = false
-        projectileRow4 = 550
-        projectileRow4Hit = false
-        decay = 255
-        decay1 = 255
+        attackMode = random([1, 2, 3])
+        if (attackMode == 1) {
+          attackNumber = random([1, 2, 3, 4])
+        }
+        if (attackMode == 2) {
+          attackNumber = random([5, 6])
+        }
+        if (attackMode == 3) {
+          attackNumber = 7
+        }
         attacked = !attacked
       }
+      projectileRow1 = 200
+      projectileRow1Hit = false
+      projectileRow2 = 700
+      projectileRow2Hit = false
+      projectileRow3 = 50
+      projectileRow3Hit = false
+      projectileRow4 = 550
+      projectileRow4Hit = false
+      projectileHit = false
+      projectileHit1 = false
+      decay = 255
+      decay1 = 255
+      projectilePos = createVector(bX - bH / 2, bossY)
+      projectilePos1 = createVector(bX + bH / 2, bossY)
+      bossX += (selection - previousX) / 60
     }
 
     player(pX, pY, pW, pH)
@@ -402,28 +425,41 @@ function attack(number) {
     }
     if (projectileRow3 >= 550 && projectileRow4 <= 50) {
       attacked = true
+      projectileRow3 = 50
+      projectileRow3Hit = false
+      projectileRow4 = 550
+      projectileRow4Hit = false
     }
     fill(255)
   }
 
   if (number == 7) {
     if (decay > 0 || decay1 > 0) {
+      if(timeChecked == false) {
+        timeCheck = frameCount
+        timeChecked = !timeChecked
+      }
+      if(frameCount >= timeCheck + 60) {
       projectilePos.add(projectileVel)
       projectilePos1.add(projectileVel1)
+      decay -= 1
+      decay1 -= 1
+      }
       fill(255, 0, 255, decay)
       circle(projectilePos.x, projectilePos.y, 50)
-      fill(0, 255, 255, decay1)
-      circle(projectilePos1.x, projectilePos1.y, 50)
-      if (dist(pX, pY, projectilePos.x, projectilePos.y) < 25 + pW / 2) {
+      if (dist(pX, pY, projectilePos.x, projectilePos.y) < 25 + pW / 2 && projectileHit == false) {
         playerHealth -= 10
+        projectileHit = !projectileHit
         decay = 0
       }
-      if (dist(pX, pY, projectilePos1.x, projectilePos1.y) < 25 + pW / 2) {
+
+      fill(0, 255, 255, decay1)
+      circle(projectilePos1.x, projectilePos1.y, 50)
+      if (dist(pX, pY, projectilePos1.x, projectilePos1.y) < 25 + pW / 2 && projectileHit1 == false) {
         playerHealth -= 10
+        projectileHit1 = !projectileHit1
         decay1 = 0
       }
-        decay -= 1
-        decay1 -= 1
     }
     if (decay <= 0 && decay1 <= 0) {
       attacked = true
