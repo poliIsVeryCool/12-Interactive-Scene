@@ -67,7 +67,7 @@ let projectileHit1 = false
 let win = false
 let lose = false
 
-function setup() {
+function setup() {  // sets up modes and sets up vectors 
   createCanvas(600, 800);
   background(0);
   ellipseMode(CENTER);
@@ -97,151 +97,30 @@ function draw() {
   background(0);
 
   if (win == false && lose == false) {
-    noFill()
-    stroke(255)
-    strokeWeight(10)
-    rect(bX, bY, bW, bH)  // player box
-    fill(255)
-    strokeWeight(0)
+    playerBox();
 
-    bulletVel = p5.Vector.sub(oldMousePos, oldPlayerPos)
-    bulletVel.setMag(20)   // fixed speed bullet trravel
+    projectilePhysics();
 
-    playerPos.set(pX, pY)
-    projectileVel.add(projectileAcc)
-    projectileVel.limit(12)
-    projectileAcc = p5.Vector.sub(playerPos, projectilePos)
-    projectileAcc.setMag(3)
-    projectileVel1.add(projectileAcc1)
-    projectileVel1.limit(7)
-    projectileAcc1 = p5.Vector.sub(playerPos, projectilePos1)
-    projectileAcc1.setMag(5)
+    drawBoss(bossX, bossY, bossW, bossH); // draws boss
+    bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth);  // call boss bar
 
-    drawBoss(bossX, bossY, bossW, bossH)
-    bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth)  // call boss bar
+    attackCycle(); // cycles attacks
 
-    if (attacked == false) {
-      attack(attackNumber)  // boss attack
-    }
+    player(pX, pY, pW, pH);  // draws player
+    playerHealthBar(400, 750, maxPlayerHealth, playerHealth);   // call player hp bar
 
-    if (attacked == true) {
-      if (timeChecked == false) {
-        timeCheck = frameCount
-        timeChecked = !timeChecked
-        previousX = bossX
-        selection = random(bossLocation)
-      }
-      if (frameCount >= timeCheck + 60) {
-        timeChecked = false
-        attackMode = random([1, 2, 3])
-        if (attackMode == 1) {
-          attackNumber = random([1, 2, 3, 4])
-        }
-        if (attackMode == 2) {
-          attackNumber = random([5, 6])
-        }
-        if (attackMode == 3) {
-          attackNumber = 7
-        }
-        attacked = !attacked
-      }
-      projectileRow1 = 200
-      projectileRow1Hit = false
-      projectileRow2 = 700
-      projectileRow2Hit = false
-      projectileRow3 = 50
-      projectileRow3Hit = false
-      projectileRow4 = 550
-      projectileRow4Hit = false
-      projectileHit = false
-      projectileHit1 = false
-      decay = 255
-      decay1 = 255
-      projectilePos = createVector(bX - bH / 2, bossY)
-      projectilePos1 = createVector(bX + bH / 2, bossY)
-      bossX += (selection - previousX) / 60
-    }
-
-    player(pX, pY, pW, pH)
-    playerHealthBar(400, 750, maxPlayerHealth, playerHealth)   // call player hp bar
-
-    bullets()
+    bullets();  // controls bullets
   }
-
-  if (win == true) {  // win screen
-    background(0)
-    textSize(40)
-    text("YOU WIN", 300, 400)
-    textSize(20)
-    text('press "r" to restart', 300, 450)
-    if (keyIsDown(82)) {
-      bossHealth = 500
-      bossHit = false
-      playerHealth = 100
-      pX = bX
-      pY = bY
-      ammo = 6
-      fired = false
-      bulletPos.set(pX, pY)
-      attacked == true
-      projectileRow1 = 200
-      projectileRow1Hit = false
-      projectileRow2 = 700
-      projectileRow2Hit = false
-      projectileRow3 = 50
-      projectileRow3Hit = false
-      projectileRow4 = 550
-      projectileRow4Hit = false
-      timeChecked = false
-      win = false
-    }
-  }
-
-  if (lose == true) {  // lose screen
-    background(0)
-    textSize(40)
-    text("YOU LOSE", 300, 400)
-    textSize(20)
-    text('press "r" to restart', 300, 450)
-    if (keyIsDown(82)) {
-      bossHealth = 500
-      bossHit = false
-      playerHealth = 100
-      pX = bX
-      pY = bY
-      ammo = 6
-      fired = false
-      bulletPos.set(pX, pY)
-      attacked == true
-      projectileRow1 = 200
-      projectileRow1Hit = false
-      projectileRow2 = 700
-      projectileRow2Hit = false
-      projectileRow3 = 50
-      projectileRow3Hit = false
-      projectileRow4 = 550
-      projectileRow4Hit = false
-      timeChecked = false
-      lose = false
-    }
-  }
-
-  if (bossHealth <= 0) {  // win con
-    win = true;
-  }
-
-  if (playerHealth <= 0) {  // lose con
-    lose = true;
-  }
+  winLose();  // win lose cons
 }
 
-function drawBoss(x, y, w, h) {
+function drawBoss(x, y, w, h) {  // draws boss
   fill('red');
   rect(x, y, w, h);
   fill(255);
 }
 
-function bossBar(x, y, name, maxHP, hp) {
+function bossBar(x, y, name, maxHP, hp) { // draws boss bar
   fill(50, 0, 0);
   rect(x, y, maxHP, 20);
   fill("red");
@@ -351,7 +230,7 @@ function attack(number) {  // holds attack patterns
     if (projectileRow1 < 700 && projectileRow2 > 200) {
       let projectileIndex1 = 1;
       while (projectileIndex1 <= 3) {  // draws top row
-        rect((bX - bW / 2) + (projectileIndex1 - 1) * 250, projectileRow1, 100, 15);  
+        rect((bX - bW / 2) + (projectileIndex1 - 1) * 250, projectileRow1, 100, 15);
         if (pX - pW / 2 < (bX - bW / 2) + ((projectileIndex1 - 1) * 250) + 50 && pX + pW / 2 > (bX - bW / 2) + ((projectileIndex1 - 1) * 250) - 50 && pY - pH / 2 < projectileRow1 + 7.5 && pY + pH / 2 > projectileRow1 - 7.5 && projectileRow1Hit == false) {
           projectileRow1Hit = !projectileRow1Hit;
           playerHealth -= 10;  // hit box
@@ -381,7 +260,7 @@ function attack(number) {  // holds attack patterns
     if (projectileRow3 < 550 && projectileRow4 > 50) {
       let projectileIndex3 = 1;
       while (projectileIndex3 <= 3) { // draws left row
-        rect(projectileRow3, (bY - bH / 2) + (projectileIndex3 - 1) * 250, 15, 100); 
+        rect(projectileRow3, (bY - bH / 2) + (projectileIndex3 - 1) * 250, 15, 100);
         if (pX - pW / 2 < projectileRow3 + 7.5 && pX + pH / 2 > projectileRow3 - 7.5 && pY - pH / 2 < (bY - bH / 2) + (projectileIndex3 - 1) * 250 + 50 && pY + pH / 2 > (bY - bH / 2) + (projectileIndex3 - 1) * 250 - 50 && projectileRow3Hit == false) {
           projectileRow3Hit = !projectileRow3Hit;
           playerHealth -= 10;  // hitbox
@@ -393,7 +272,7 @@ function attack(number) {  // holds attack patterns
       while (projectileIndex4 <= 2) {  // draws right row
         rect(projectileRow4, (bY - bH / 2) + (projectileIndex4 - 1) * 250 + 125, 15, 100);
         if (pX - pW / 2 < projectileRow4 + 7.5 && pX + pH / 2 > projectileRow4 - 7.5 && pY - pH / 2 < (bY - bH / 2) + (projectileIndex4 - 1) * 250 + 175 && pY + pH / 2 > (bY - bH / 2) + (projectileIndex4 - 1) * 250 + 75 && projectileRow4Hit == false) {
-          projectileRow4Hit = !projectileRow4Hit;  
+          projectileRow4Hit = !projectileRow4Hit;
           playerHealth -= 10;  // hit box
         }
         projectileRow4 -= 3;   // moves row
@@ -419,7 +298,7 @@ function attack(number) {  // holds attack patterns
       if (frameCount >= timeCheck + 60) {// timer before projectiles move
         projectilePos.add(projectileVel);  // moves pink projectile
         projectilePos1.add(projectileVel1);  // moves cyan projectile
-        decay -= 1;  
+        decay -= 1;
         decay1 -= 1;  // changes projectiles opacity before deletion
       }
       fill(255, 0, 255, decay)
@@ -446,7 +325,51 @@ function attack(number) {  // holds attack patterns
   }
 }
 
-function player(x, y, w, h) {
+function attackCycle() {  //  controls cycle of attacks
+  if (attacked == false) {
+    attack(attackNumber)  // boss attacks
+  }
+
+  if (attacked == true) {
+    if (timeChecked == false) {  // starts timer before next attack and sets up boss movement
+      timeCheck = frameCount;
+      timeChecked = !timeChecked;
+      previousX = bossX;
+      selection = random(bossLocation);
+    }
+    if (frameCount >= timeCheck + 60) {  // attack selection
+      timeChecked = false;
+      attackMode = random([1, 2, 3]);
+      if (attackMode == 1) {
+        attackNumber = random([1, 2, 3, 4]);
+      }
+      if (attackMode == 2) {
+        attackNumber = random([5, 6]);
+      }
+      if (attackMode == 3) {
+        attackNumber = 7;
+      }
+      attacked = !attacked;
+    }
+    projectileRow1 = 200;   // reset all attack variables
+    projectileRow1Hit = false;
+    projectileRow2 = 700;
+    projectileRow2Hit = false;
+    projectileRow3 = 50;
+    projectileRow3Hit = false;
+    projectileRow4 = 550;
+    projectileRow4Hit = false;
+    projectileHit = false;
+    projectileHit1 = false;
+    decay = 255;
+    decay1 = 255;
+    projectilePos = createVector(bX - bH / 2, bossY);
+    projectilePos1 = createVector(bX + bH / 2, bossY);
+    bossX += (selection - previousX) / 60;  // moves boss position
+  }
+}
+
+function player(x, y, w, h) { // draws player
   fill(0, 255, 255);
   rect(x, y, w, h);  // draw player
   fill(255);
@@ -479,7 +402,7 @@ function player(x, y, w, h) {
   }
 }
 
-function playerHealthBar(x, y, maxhp, hp) {
+function playerHealthBar(x, y, maxhp, hp) {  // draws player hp bar
   fill('red');
   rect(x, y, maxhp, 50);
   fill("green");
@@ -493,13 +416,22 @@ function playerHealthBar(x, y, maxhp, hp) {
 
 }
 
-function drawBullet(x, y) {
+function playerBox() { // creates box that restricts player movement
+  noFill();
+  stroke(255);
+  strokeWeight(10);
+  rect(bX, bY, bW, bH);  // player box
+  fill(255);
+  strokeWeight(0);
+}
+
+function drawBullet(x, y) {  // draws bullet
   fill("yellow");
   rect(x, y, 20, 80);
   fill(255);
 }
 
-function bullets() {
+function bullets() {  // creates moves and displays bullets
   let bulletIndex = 0;
   while (bulletIndex < ammo) {  // ammo display
     drawBullet((bulletIndex + 1) * 30 + 25, 750);
@@ -526,8 +458,83 @@ function bullets() {
   }
 }
 
-function mousePressed() {
-  if (ammo > 0 && fired == false) {  // sets things up to fire the bullet
+function projectilePhysics() {
+  bulletVel = p5.Vector.sub(oldMousePos, oldPlayerPos);  // calculates bullet velocity
+  bulletVel.setMag(20);   // fixed speed bullet trravel
+
+  playerPos.set(pX, pY);
+  projectileVel.add(projectileAcc);  // calculates projectile velocity
+  projectileVel.limit(12);  // limits projectile velocity
+  projectileAcc = p5.Vector.sub(playerPos, projectilePos);  // caluates projectile acceleration toward player
+  projectileAcc.setMag(3);  // limits projectile acceleration
+
+  projectileVel1.add(projectileAcc1);  // calculates projectile1 velocity
+  projectileVel1.limit(7);  // limits projectile1 velocity
+  projectileAcc1 = p5.Vector.sub(playerPos, projectilePos1);  // caluates projectile1 acceleration toward player
+  projectileAcc1.setMag(5);  // limits projectile acceleration
+}
+
+function winLose() {  // win and lose conditions and screens
+  if (bossHealth <= 0) {  // win con
+    win = true;
+  }
+  if (win == true) {  // win screen and restart
+    background(0);
+    textSize(40);
+    text("YOU WIN", 300, 400);
+    textSize(20);
+    text('press "r" to restart', 300, 450);
+    if (keyIsDown(82)) {
+      reset();
+      win = false;
+    }
+  }
+
+  if (playerHealth <= 0) {  // lose con
+    lose = true;
+  }
+  if (lose == true) {  // lose screen and restart
+    background(0);
+    textSize(40);
+    text("YOU LOSE", 300, 400);
+    textSize(20);
+    text('press "r" to restart', 300, 450);
+    if (keyIsDown(82)) {
+      reset();
+      lose = false;
+    }
+  }
+}
+
+function reset() {  // resets all variables before restarting the game
+  bossHealth = 500;
+  bossHit = false;
+  playerHealth = 100;
+  pX = bX;
+  pY = bY;
+  ammo = 6;
+  fired = false;
+  bulletPos.set(pX, pY);
+  attacked == true;
+  projectileRow1 = 200;
+  projectileRow1Hit = false;
+  projectileRow2 = 700;
+  projectileRow2Hit = false;
+  projectileRow3 = 50;
+  projectileRow3Hit = false;
+  projectileRow4 = 550;
+  projectileRow4Hit = false;
+  projectileHit = false;
+  projectileHit1 = false;
+  decay = 255;
+  decay1 = 255;
+  projectilePos = createVector(bX - bH / 2, bossY);
+  projectilePos1 = createVector(bX + bH / 2, bossY);
+  timeChecked = false;
+}
+
+function mousePressed() {  // sets things up to fire the bullet
+  if (ammo > 0 && fired == false) {
     ammo -= 1;
     oldPlayerPos.set(pX, pY);
     oldMousePos.set(mouseX, mouseY);
