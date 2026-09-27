@@ -12,8 +12,8 @@ let selection = 0
 let bossY = 150
 let bossW = 50
 let bossH = 50
-let maxBossHealth = 500
-let bossHealth = 500
+let maxBossHealth = 250
+let bossHealth = maxBossHealth
 let bossHit = false
 let attackNumber = 1
 let attackMode = 1
@@ -32,7 +32,7 @@ let pY = 450
 let pW = 50
 let pH = 50
 let maxPlayerHealth = 100
-let playerHealth = 100
+let playerHealth = maxPlayerHealth
 
 let bX = 300
 let bY = 450
@@ -67,9 +67,14 @@ let projectileHit1 = false
 let started = false
 let win = false
 let lose = false
-let difficulty = 0
+let difficulty = 1
+let hpSet = false
+let button1 = 0
+let button2 = 0
+let button3 = 0
+let delay = 60
 
-function setup() {  // sets up modes and sets up vectors 
+function setup() {  // sets up modes and sets up vectors
   createCanvas(600, 800);
   background(0);
   fill(255);
@@ -101,10 +106,12 @@ function draw() {
 
   start();  // start screen
 
-  if (started == true && win == false && lose == false) {
-    playerBox(); // draws box that restricts player 
+  difficultySettings(); // changes things to fit difficulty
 
-    projectilePhysics();  // handles projectile calcs 
+  if (started == true && win == false && lose == false) {
+    playerBox(); // draws box that restricts player
+
+    projectilePhysics();  // handles projectile calcs
 
     drawBoss(bossX, bossY, bossW, bossH); // draws boss
     bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth);  // call boss bar
@@ -136,9 +143,9 @@ function bossBar(x, y, name, maxHP, hp) { // draws boss bar
   text(name, x, y - 30);
   textSize(20);
   fill(255);
-  text(hp, x - 20, y + 25);
+  text(hp, x - 30, y + 25);
   text("/", x, y + 25);
-  text(maxHP, x + 20, y + 25);
+  text(maxHP, x + 30, y + 25);
 }
 
 function attack(number) {  // holds attack patterns
@@ -151,7 +158,7 @@ function attack(number) {  // holds attack patterns
       timeCheck = frameCount;
       timeChecked = !timeChecked;
     }
-    if (frameCount >= timeCheck + 60) {
+    if (frameCount >= timeCheck + delay + 30) {
       fill("red");
       if (pX - pW / 2 < bX) {// hit box
         playerHealth -= 10;
@@ -171,7 +178,7 @@ function attack(number) {  // holds attack patterns
       timeCheck = frameCount;
       timeChecked = !timeChecked;
     }
-    if (frameCount >= timeCheck + 60) {
+    if (frameCount >= timeCheck + delay + 30) {
       fill("red");
       if (pX + pW / 2 > bX) { // hit box
         playerHealth -= 10;
@@ -191,7 +198,7 @@ function attack(number) {  // holds attack patterns
       timeCheck = frameCount;
       timeChecked = !timeChecked;
     }
-    if (frameCount >= timeCheck + 60) {
+    if (frameCount >= timeCheck + delay + 30) {
       fill("red");
       if (pY - pH / 2 < bY) { // hit box
         playerHealth -= 10;
@@ -211,7 +218,7 @@ function attack(number) {  // holds attack patterns
       timeCheck = frameCount;
       timeChecked = !timeChecked;
     }
-    if (frameCount >= timeCheck + 60) {
+    if (frameCount >= timeCheck + delay + 30) {
       fill("red");
       if (pY + pH / 2 > bY) { // hit box
         playerHealth -= 10;
@@ -300,7 +307,7 @@ function attack(number) {  // holds attack patterns
         timeCheck = frameCount;
         timeChecked = !timeChecked;
       }
-      if (frameCount >= timeCheck + 60) {// timer before projectiles move
+      if (frameCount >= timeCheck + delay) {// timer before projectiles move
         projectilePos.add(projectileVel);  // moves pink projectile
         projectilePos1.add(projectileVel1);  // moves cyan projectile
         decay -= 1;
@@ -342,7 +349,7 @@ function attackCycle() {  //  controls cycle of attacks
       previousX = bossX;
       selection = random(bossLocation);
     }
-    if (frameCount >= timeCheck + 60) {  // attack selection
+    if (frameCount >= timeCheck + delay) {  // attack selection
       timeChecked = false;
       attackMode = random([1, 2, 3]);
       if (attackMode == 1) {
@@ -370,7 +377,8 @@ function attackCycle() {  //  controls cycle of attacks
     decay1 = 255;
     projectilePos = createVector(bX - bH / 2, bossY);
     projectilePos1 = createVector(bX + bH / 2, bossY);
-    bossX += (selection - previousX) / 60;  // moves boss position
+    bossX += (selection - previousX) / (delay + 1);  // moves boss position
+
   }
 }
 
@@ -454,7 +462,7 @@ function bullets() {  // creates moves and displays bullets
   }
 
   if (bulletPos.x + 10 > bossX - bossW / 2 && bulletPos.x - 10 < bossX + bossW / 2 && bulletPos.y - 40 < bossY + bossH / 2 && bulletPos.y + 40 > bossY - bossH / 2 && bossHit == false) {
-    bossHealth -= 10;
+    bossHealth -= 5;
     bossHit = !bossHit;  // boss hit box
   }
 
@@ -479,16 +487,54 @@ function projectilePhysics() {  // projectile physics calcs
   projectileAcc1.setMag(5);  // limits projectile acceleration
 }
 
-function start() {  // start screen 
+function start() {  // start screen
   if (started == false) {
     background(0);
     textSize(40);
     text("placeHolder", 300, 200);
     textSize(20);
     text("i was too lazy to make a name", 300, 250);
-    text('press "r" to start', 300, 400);
-    if (keyIsDown(82)) {
-      started = !started;
+    text("Difficulty", 300, 350);
+    stroke(255);
+    fill(button1);
+    rect(300, 400, 200, 50);  // difficulty selector
+    fill(button2);
+    rect(300, 475, 200, 50);
+    fill(button3);
+    rect(300, 550, 200, 50);
+    noStroke();
+    fill(255);
+    textSize(30);
+    text("Easy", 300, 400);
+    text("Hard", 300, 475);
+    text("Impossible", 300, 550);
+    textSize(20);
+    if (mouseX >= 200 && mouseX <= 400 && mouseY <= 425 && mouseY >= 375) {
+      button1 = 100
+      if (mouseIsPressed == true) {
+        difficulty = 0;
+        started = !started;
+      }
+    } else {
+      button1 = 0
+    }
+    if (mouseX >= 200 && mouseX <= 400 && mouseY <= 500 && mouseY >= 450) {
+      button2 = 100
+      if (mouseIsPressed == true) {
+        difficulty = 1;
+        started = !started;
+      }
+    } else {
+      button2 = 0
+    }
+    if (mouseX >= 200 && mouseX <= 475 && mouseY <= 575 && mouseY >= 525) {
+      button3 = 100
+      if (mouseIsPressed == true) {
+        difficulty = 2;
+        started = !started;
+      }
+    } else {
+      button3 = 0
     }
   }
 }
@@ -526,7 +572,27 @@ function winLose() {  // win and lose conditions and screens
 }
 
 function difficultySettings() {  // handles difficulty settings
-
+  if (difficulty == 0) {
+    maxBossHealth = 250;
+    maxPlayerHealth = 100;  // easy
+    bossHealth = 250;
+    playerHealth = 100;
+    delay = 60;
+  }
+  if (difficulty == 1) {
+    maxBossHealth = 500;
+    maxPlayerhealth = 100; // hard
+    bossHealth = 500;
+    playerHealth = 100;
+    delay = 30;
+  }
+  if (difficulty == 2) {
+    maxBossHealth = 500;  // impossible
+    maxPlayerHealth = 10;
+    bossHealth = 500;
+    playerHealth = 10;
+    delay = 0;
+  }
 }
 
 function reset() {  // resets all variables before restarting the game
