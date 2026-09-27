@@ -64,12 +64,15 @@ let decay1 = 255
 let projectileHit = false
 let projectileHit1 = false
 
+let started = false
 let win = false
 let lose = false
+let difficulty = 0
 
 function setup() {  // sets up modes and sets up vectors 
   createCanvas(600, 800);
   background(0);
+  fill(255);
   ellipseMode(CENTER);
   rectMode(CENTER);
   textAlign(CENTER, CENTER);
@@ -78,8 +81,8 @@ function setup() {  // sets up modes and sets up vectors
   imageMode(CENTER)
   frameRate(60);
 
-  // vectors 
-  bulletPos = createVector(pX, pY)  // cordinate relative to origin
+  // set up vectors
+  bulletPos = createVector(pX, pY)
   bulletVel = createVector(0, 0)
   oldPlayerPos = createVector(pX, pY)
   oldMousePos = createVector(mouseX, mouseY)
@@ -96,10 +99,12 @@ function setup() {  // sets up modes and sets up vectors
 function draw() {
   background(0);
 
-  if (win == false && lose == false) {
-    playerBox();
+  start();  // start screen
 
-    projectilePhysics();
+  if (started == true && win == false && lose == false) {
+    playerBox(); // draws box that restricts player 
+
+    projectilePhysics();  // handles projectile calcs 
 
     drawBoss(bossX, bossY, bossW, bossH); // draws boss
     bossBar(300, 50, "placeHolder", maxBossHealth, bossHealth);  // call boss bar
@@ -317,7 +322,7 @@ function attack(number) {  // holds attack patterns
         decay1 = 0;
       }
     }
-    if (decay <= 0 && decay1 <= 0) {  // stops attack pattern when both projectiles disapear
+    if (decay <= 50 && decay1 <= 50) {  // stops attack pattern when both projectiles disapear
       timeChecked = false;
       attacked = true;
     }
@@ -458,7 +463,7 @@ function bullets() {  // creates moves and displays bullets
   }
 }
 
-function projectilePhysics() {
+function projectilePhysics() {  // projectile physics calcs
   bulletVel = p5.Vector.sub(oldMousePos, oldPlayerPos);  // calculates bullet velocity
   bulletVel.setMag(20);   // fixed speed bullet trravel
 
@@ -472,6 +477,20 @@ function projectilePhysics() {
   projectileVel1.limit(7);  // limits projectile1 velocity
   projectileAcc1 = p5.Vector.sub(playerPos, projectilePos1);  // caluates projectile1 acceleration toward player
   projectileAcc1.setMag(5);  // limits projectile acceleration
+}
+
+function start() {  // start screen 
+  if (started == false) {
+    background(0);
+    textSize(40);
+    text("placeHolder", 300, 200);
+    textSize(20);
+    text("i was too lazy to make a name", 300, 250);
+    text('press "r" to start', 300, 400);
+    if (keyIsDown(82)) {
+      started = !started;
+    }
+  }
 }
 
 function winLose() {  // win and lose conditions and screens
@@ -496,7 +515,7 @@ function winLose() {  // win and lose conditions and screens
   if (lose == true) {  // lose screen and restart
     background(0);
     textSize(40);
-    text("YOU LOSE", 300, 400);
+    text("YOU SUCK", 300, 400);
     textSize(20);
     text('press "r" to restart', 300, 450);
     if (keyIsDown(82)) {
@@ -506,10 +525,14 @@ function winLose() {  // win and lose conditions and screens
   }
 }
 
+function difficultySettings() {  // handles difficulty settings
+
+}
+
 function reset() {  // resets all variables before restarting the game
-  bossHealth = 500;
+  bossHealth = maxBossHealth;
   bossHit = false;
-  playerHealth = 100;
+  playerHealth = maxPlayerHealth;
   pX = bX;
   pY = bY;
   ammo = 6;
@@ -534,12 +557,14 @@ function reset() {  // resets all variables before restarting the game
 }
 
 function mousePressed() {  // sets things up to fire the bullet
-  if (ammo > 0 && fired == false) {
-    ammo -= 1;
-    oldPlayerPos.set(pX, pY);
-    oldMousePos.set(mouseX, mouseY);
-    bulletPos.set(pX, pY);
-    fired = true;
+  if (started == true && win == false && lose == false) {
+    if (ammo > 0 && fired == false) {
+      ammo -= 1;
+      oldPlayerPos.set(pX, pY);
+      oldMousePos.set(mouseX, mouseY);
+      bulletPos.set(pX, pY);
+      fired = true;
+    }
   }
 }
 
