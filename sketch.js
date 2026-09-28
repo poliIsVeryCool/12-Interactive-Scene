@@ -4,75 +4,79 @@
 // I bit off more that I could chew for this one
 
 // Variables Delcared
-let bossX = 300
-let previousX = 0
-let bossLocation = [100, 200, 300, 400, 500]
-let bossMoved = 0
-let selection = 0
-let bossY = 150
-let bossW = 50
-let bossH = 50
-let maxBossHealth = 250
-let bossHealth = maxBossHealth
-let bossHit = false
-let attackNumber = 1
-let attackMode = 1
-let attacked = true
-let projectileRow1 = 200
-let projectileRow1Hit = false
-let projectileRow2 = 700
-let projectileRow2Hit = false
-let projectileRow3 = 50
-let projectileRow3Hit = false
-let projectileRow4 = 550
-let projectileRow4Hit = false
+let bossX = 300;
+let previousX = 0;
+let bossLocation = [100, 200, 300, 400, 500];
+let bossMoved = 0;
+let selection = 0;
+let bossY = 150;
+let bossW = 50;
+let bossH = 50;
+let maxBossHealth = 250;
+let bossHealth = maxBossHealth;
+let bossHit = false;
+let attackNumber = 1;
+let attackMode = 1;
+let attacked = true;
+let projectileRow1 = 200;
+let projectileRow1Hit = false;
+let projectileRow2 = 700;
+let projectileRow2Hit = false;
+let projectileRow3 = 50;
+let projectileRow3Hit = false;
+let projectileRow4 = 550;
+let projectileRow4Hit = false;
 
-let pX = 300
-let pY = 450
-let pW = 50
-let pH = 50
-let maxPlayerHealth = 100
-let playerHealth = maxPlayerHealth
+let pX = 300;
+let pY = 450;
+let pW = 50;
+let pH = 50;
+let maxPlayerHealth = 100;
+let playerHealth = maxPlayerHealth;
 
-let bX = 300
-let bY = 450
-let bW = 500
-let bH = 500
+let bX = 300;
+let bY = 450;
+let bW = 500;
+let bH = 500;
 
-let ammo = 6
-let bulletX
-let bulletY
-let fired = false
+let ammo = 6;
+let bulletX;
+let bulletY;
+let fired = false;
 
-let timeCheck = 0
-let timeChecked = false
+let timeCheck = 0;
+let timeChecked = false;
 
-let bulletPos
-let bulletVel
-let oldPlayerPos
-let oldMousePos
+let bulletPos;
+let bulletVel;
+let oldPlayerPos;
+let oldMousePos;
 
-let playerPos
-let projectilePos
-let projectileVel
-let projectileAcc
-let projectilePos1
-let projectileVel1
-let projectileAcc1
-let decay = 255
-let decay1 = 255
-let projectileHit = false
-let projectileHit1 = false
+let playerPos;
+let projectilePos;
+let projectileVel;
+let projectileAcc;
+let projectilePos1;
+let projectileVel1;
+let projectileAcc1;
+let decay = 255;
+let decay1 = 255;
+let projectileHit = false;
+let projectileHit1 = false;
 
-let started = false
-let win = false
-let lose = false
-let difficulty = 0
-let difficultySet = 0
-let button1 = 0
-let button2 = 0
-let button3 = 0
-let delay = 60
+let started = false;
+let win = false;
+let lose = false;
+let difficulty = 0;
+let difficultySet = 0;
+let button1 = 0;
+let button2 = 0;
+let button3 = 0;
+let button4 = 0;
+let button5 = 0;
+let button6 = 0;
+let button7 = 0;
+let delay = 60;
 
 function setup() {  // sets up modes and sets up vectors
   createCanvas(600, 800);
@@ -82,23 +86,23 @@ function setup() {  // sets up modes and sets up vectors
   rectMode(CENTER);
   textAlign(CENTER, CENTER);
   textFont("bazooka");
-  textSize(20)
-  imageMode(CENTER)
+  textSize(20);
+  imageMode(CENTER);
   frameRate(60);
 
   // set up vectors
-  bulletPos = createVector(pX, pY)
-  bulletVel = createVector(0, 0)
-  oldPlayerPos = createVector(pX, pY)
-  oldMousePos = createVector(mouseX, mouseY)
+  bulletPos = createVector(pX, pY);
+  bulletVel = createVector(0, 0);
+  oldPlayerPos = createVector(pX, pY);
+  oldMousePos = createVector(mouseX, mouseY);
 
-  projectilePos = createVector(bX - bH / 2, bossY)
-  projectileVel = createVector(0, 0)
-  projectileAcc = createVector(0, 0)
-  projectilePos1 = createVector(bX + bH / 2, bossY)
-  projectileVel1 = createVector(0, 0)
-  projectileAcc1 = createVector(0, 0)
-  playerPos = createVector(pX, pY)
+  projectilePos = createVector(bX - bH / 2, bossY);
+  projectileVel = createVector(0, 0);
+  projectileAcc = createVector(0, 0);
+  projectilePos1 = createVector(bX + bH / 2, bossY);
+  projectileVel1 = createVector(0, 0);
+  projectileAcc1 = createVector(0, 0);
+  playerPos = createVector(pX, pY);
 }
 
 function draw() {
@@ -486,14 +490,17 @@ function projectilePhysics() {  // projectile physics calcs
 }
 
 function start() {  // start screen
-  if (started == false) {
+  if (timeChecked == false) {
+    timeCheck = frameCount
+    timeChecked = !timeChecked
+  }
+  if (started == false && frameCount >= timeCheck + 60) {
     background(0);
     textSize(40);
     text("placeHolder", 300, 200);
     textSize(20);
     text("i was too lazy to make a name", 300, 250);
     text("Difficulty", 300, 350);
-    stroke(255);
     fill(button1);
     rect(300, 400, 200, 50);  // difficulty selector
     fill(button2);
@@ -511,6 +518,7 @@ function start() {  // start screen
       button1 = 100
       if (mouseIsPressed == true) {
         difficulty = 0;
+        timeChecked = false
         started = !started;
       }
     } else {
@@ -520,6 +528,7 @@ function start() {  // start screen
       button2 = 100
       if (mouseIsPressed == true) {
         difficulty = 1;
+        timeChecked = false
         started = !started;
       }
     } else {
@@ -529,6 +538,7 @@ function start() {  // start screen
       button3 = 100
       if (mouseIsPressed == true) {
         difficulty = 2;
+        timeChecked = false
         started = !started;
       }
     } else {
@@ -545,12 +555,35 @@ function winLose() {  // win and lose conditions and screens
   if (win == true) {  // win screen and restart
     background(0);
     textSize(40);
-    text("YOU WIN", 300, 400);
+    text("YOU WIN", 300, 200);
+    stroke(255);
+    fill(button4);
+    rect(300, 400, 300, 50);  // difficulty selector
+    fill(button5);
+    rect(300, 475, 300, 50);
+    fill(255);
+    textSize(30);
+    text("Retry", 300, 400);
+    text("Return To Start Screen", 300, 475);
     textSize(20);
-    text('press "r" to restart', 300, 450);
-    if (keyIsDown(82)) {
-      reset();
-      win = false;
+    if (mouseX >= 150 && mouseX <= 450 && mouseY <= 425 && mouseY >= 375) {
+      button4 = 100
+      if (mouseIsPressed == true) {
+        reset();
+        win = false;
+      }
+    } else {
+      button4 = 0
+    }
+    if (mouseX >= 150 && mouseX <= 450 && mouseY <= 500 && mouseY >= 450) {
+      button5 = 100
+      if (mouseIsPressed == true) {
+        reset();
+        win = false;
+        started = false;
+      }
+    } else {
+      button5 = 0
     }
   }
 
@@ -560,38 +593,61 @@ function winLose() {  // win and lose conditions and screens
   if (lose == true) {  // lose screen and restart
     background(0);
     textSize(40);
-    text("YOU SUCK", 300, 400);
+    text("YOU SUCK", 300, 200);
+    stroke(255);
+    fill(button6);
+    rect(300, 400, 300, 50);  // difficulty selector
+    fill(button7);
+    rect(300, 475, 300, 50);
+    fill(255);
+    textSize(30);
+    text("Retry", 300, 400);
+    text("Return To Start Screen", 300, 475);
     textSize(20);
-    text('press "r" to restart', 300, 450);
-    if (keyIsDown(82)) {
-      reset();
-      lose = false;
+    if (mouseX >= 150 && mouseX <= 450 && mouseY <= 425 && mouseY >= 375) {
+      button6 = 100
+      if (mouseIsPressed == true) {
+        reset();
+        lose = false;
+      }
+    } else {
+      button6 = 0
+    }
+    if (mouseX >= 150 && mouseX <= 450 && mouseY <= 500 && mouseY >= 450) {
+      button7 = 100
+      if (mouseIsPressed == true) {
+        reset();
+        lose = false;
+        started = false;
+      }
+    } else {
+      button7 = 0
     }
   }
 }
 
 function difficultySettings() {  // handles difficulty settings
-    if (difficulty == 0) {
-      maxBossHealth = 250;
-      maxPlayerHealth = 100;  // easy
-      bossHealth = 250;
-      playerHealth = 100;
-      delay = 60;
-    }
-    if (difficulty == 1) {
-      maxBossHealth = 500;
-      maxPlayerhealth = 100; // hard
-      bossHealth = 500;
-      playerHealth = 100;
-      delay = 30;
-    }
-    if (difficulty == 2) {
-      maxBossHealth = 500;  // impossible
-      maxPlayerHealth = 10;
-      bossHealth = 500;
-      playerHealth = 10;
-      delay = 0;
-    }
+  if (difficulty == 0) {
+    maxBossHealth = 250;
+    maxPlayerHealth = 100;  // easy
+    bossHealth = 250;
+    playerHealth = 100;
+    delay = 60;
+  }
+  if (difficulty == 1) {
+    maxBossHealth = 500;
+    maxPlayerhealth = 100; // hard
+    bossHealth = 500;
+    playerHealth = 100;
+    delay = 30;
+  }
+  if (difficulty == 2) {
+    maxBossHealth = 500;  // impossible
+    maxPlayerHealth = 10;
+    bossHealth = 500;
+    playerHealth = 10;
+    delay = 0;
+  }
 }
 
 function reset() {  // resets all variables before restarting the game
