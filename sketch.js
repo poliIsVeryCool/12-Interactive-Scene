@@ -67,8 +67,8 @@ let projectileHit1 = false
 let started = false
 let win = false
 let lose = false
-let difficulty = 1
-let hpSet = false
+let difficulty = 0
+let difficultySet = 0
 let button1 = 0
 let button2 = 0
 let button3 = 0
@@ -105,8 +105,6 @@ function draw() {
   background(0);
 
   start();  // start screen
-
-  difficultySettings(); // changes things to fit difficulty
 
   if (started == true && win == false && lose == false) {
     playerBox(); // draws box that restricts player
@@ -536,6 +534,7 @@ function start() {  // start screen
     } else {
       button3 = 0
     }
+    difficultySettings(); // changes things to fit difficulty
   }
 }
 
@@ -572,27 +571,27 @@ function winLose() {  // win and lose conditions and screens
 }
 
 function difficultySettings() {  // handles difficulty settings
-  if (difficulty == 0) {
-    maxBossHealth = 250;
-    maxPlayerHealth = 100;  // easy
-    bossHealth = 250;
-    playerHealth = 100;
-    delay = 60;
-  }
-  if (difficulty == 1) {
-    maxBossHealth = 500;
-    maxPlayerhealth = 100; // hard
-    bossHealth = 500;
-    playerHealth = 100;
-    delay = 30;
-  }
-  if (difficulty == 2) {
-    maxBossHealth = 500;  // impossible
-    maxPlayerHealth = 10;
-    bossHealth = 500;
-    playerHealth = 10;
-    delay = 0;
-  }
+    if (difficulty == 0) {
+      maxBossHealth = 250;
+      maxPlayerHealth = 100;  // easy
+      bossHealth = 250;
+      playerHealth = 100;
+      delay = 60;
+    }
+    if (difficulty == 1) {
+      maxBossHealth = 500;
+      maxPlayerhealth = 100; // hard
+      bossHealth = 500;
+      playerHealth = 100;
+      delay = 30;
+    }
+    if (difficulty == 2) {
+      maxBossHealth = 500;  // impossible
+      maxPlayerHealth = 10;
+      bossHealth = 500;
+      playerHealth = 10;
+      delay = 0;
+    }
 }
 
 function reset() {  // resets all variables before restarting the game
