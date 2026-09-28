@@ -1,7 +1,8 @@
 // Project Title   Interactive Project
 // Your Name(s)    Policron Willard Aggabao
 // Date            September 21st
-// I bit off more that I could chew for this one
+// I think I bit off more that I could chew for this one
+// Update: Yes you did
 
 // Variables Delcared
 let bossX = 300;
